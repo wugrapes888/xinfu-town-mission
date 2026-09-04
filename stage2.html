@@ -603,7 +603,7 @@
           <p>接下來要找的地方不在最高處，而藏在市場更深處。</p>
           <p>從六角樓離開後，讓水果攤替你帶路。</p>
           <p>如果途中聞到滷肉飯的香氣，不必懷疑，你仍走在正確的方向。</p>
-          <p>若再看見一味臺中人熟悉的綠色家常味——麻薏，代表那位守護市場信用的人，就在附近了。</p>
+          <p>若再看見一味臺中人熟悉的綠色家常味——麻薏，請留意附近供人參拜的小廟；那位守護市場信用的人，就在廟裡。</p>
         </div>
 
         <p class="notice">請依序在現場確認下列三個訊號。每確認一項，就勾選一次；三項都完成後，才能繼續。</p>
@@ -618,7 +618,7 @@
           </div>
           <div class="trail-item">
             <div class="trail-number">③</div>
-            <label><input type="checkbox" data-trail> 麻薏 <small>若再看見這味臺中人熟悉的綠色家常味，代表目標就在附近。</small></label>
+            <label><input type="checkbox" data-trail> 麻薏與小廟 <small>若再看見這味臺中人熟悉的綠色家常味，請尋找附近供人參拜的小廟。</small></label>
           </div>
         </div>
 
@@ -629,20 +629,20 @@
       <section class="answer-stage" id="sft-answer-stage">
         <div class="challenge-card">
           <p class="mission-kicker">玩家任務</p>
-          <h2 class="challenge-title"><span>抬頭尋找</span><span>正式名稱</span></h2>
-          <p class="challenge-note">找到這座藏在第二市場裡的地點。抵達後，請抬頭尋找正式名稱。</p>
+          <h2 class="challenge-title"><span>抬頭尋找</span><span>廟的名字</span></h2>
+          <p class="challenge-note">找到這座藏在第二市場裡的小廟。抵達後，請抬頭尋找廟的正式名稱。</p>
         </div>
 
         <div class="letter">
-          <p>抵達後，請抬頭尋找正式名稱。</p>
-          <p>把你看到的名字寫下來。</p>
+          <p>抵達後，請抬頭尋找廟額或門楣上的正式名稱。</p>
+          <p>把你看到的廟名寫下來。</p>
         </div>
 
-        <p class="notice">請輸入你看到的正式名稱。</p>
+        <p class="notice">請輸入你看到的廟名。</p>
         <form class="answers" id="sft-answer-form">
           <label class="answer-field">
             <span class="sr-only">請輸入第二關答案</span>
-            <input id="sft-answer-input" type="text" inputmode="text" autocomplete="off" placeholder="正式名稱" aria-label="正式名稱">
+            <input id="sft-answer-input" type="text" inputmode="text" autocomplete="off" placeholder="廟名" aria-label="廟名">
           </label>
           <button type="submit">確認答案</button>
         </form>
@@ -702,10 +702,10 @@
       const hintButton = root.querySelector('#sft-hint-button');
       const hints = root.querySelector('#sft-hints');
       const hintTexts = [
-        '提示一：答案在正式名稱裡，不是人物的名字。',
-        '提示二：請抬頭找名稱標示。',
-        '提示三：答案不在商品、攤位或旁邊物件上。',
-        '提示四：第一個字指向那位武聖的身份；第二個字指向承諾與品行。'
+        '提示一：你要找的是市場裡供人參拜的小廟，不是攤位、餐飲店或商品。',
+        '提示二：抵達後請抬頭看廟額、門楣或名稱牌，答案就在廟名上。',
+        '提示三：請輸入完整廟名，答案是三個字，最後一個字是「宮」。',
+        '提示四：這座廟和武聖關公、忠義與守信有關。'
       ];
       let hintStep = 0;
 
@@ -740,13 +740,13 @@
           const complete = trailChecks.every(item => item.checked);
           arriveButton.disabled = !complete;
           routeNotice.textContent = complete
-            ? '三個市場訊號都出現了。現在請繼續前往那位守護承諾的人所在之處。'
+            ? '三個市場訊號都出現了。現在請尋找附近供人參拜的小廟。'
             : '目前尚未完成三個訊號確認。';
         });
       });
 
       arriveButton.addEventListener('click', () => {
-        show(answerStage, '確認正式名稱', answerInput);
+        show(answerStage, '確認廟名', answerInput);
       });
 
       answerForm.addEventListener('submit', event => {
@@ -763,13 +763,13 @@
           answerForm.querySelector('button').disabled = true;
           window.setTimeout(() => show(reveal, '檔案解封', null), 650);
         } else if (!answer) {
-          answerFeedback.textContent = '請先寫下你看到的正式名稱。';
+          answerFeedback.textContent = '請先寫下你看到的廟名。';
           answerInput.focus();
         } else if (tooBroad.includes(answer)) {
-          answerFeedback.textContent = '你靠近現場了，但這題問的是正式名稱，不是神明、信仰意義或市場概念。';
+          answerFeedback.textContent = '你靠近現場了，但這題問的是廟名，不是神明、信仰意義或市場概念。';
           answerInput.select();
         } else {
-          answerFeedback.textContent = '這個名字還沒有吻合。請抬頭看正式名稱。';
+          answerFeedback.textContent = '這個名字還沒有吻合。請抬頭看廟的正式名稱。';
           answerInput.select();
         }
       });
