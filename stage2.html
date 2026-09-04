@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="新富町市場承諾互動解謎">
+  <title>守住市場承諾的人｜城市殘影調查檔案</title>
+</head>
+<body>
+<div id="sft-puzzle">
+  <style>
+    html { background: #211915; }
+    body {
+      margin: 0;
+      padding: 14px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(142, 86, 43, .28), transparent 52%),
+        linear-gradient(150deg, #3a2a20 0%, #211915 54%, #15100d 100%);
+    }
+    #sft-puzzle {
+      --ink: #21170f;
+      --paper: #e6c88f;
+      --paper-light: #fff0c6;
+      --paper-deep: #c99f60;
+      --rust: #8d3428;
+      --rust-dark: #61231d;
+      --olive: #47614d;
+      --line: rgba(70, 47, 25, .30);
+      --faded: #6c573c;
+      color: var(--ink);
+      font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    #sft-puzzle * { box-sizing: border-box; }
+    #sft-puzzle .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    #sft-puzzle .sheet {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 28px);
+      padding: 30px 22px 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.20), transparent 18%),
+        radial-gradient(ellipse at 18% 4%, rgba(255, 249, 221, .76), transparent 34%),
+        radial-gradient(ellipse at 82% 86%, rgba(112, 70, 34, .18), transparent 42%),
+        repeating-linear-gradient(28deg, transparent 0 58px, rgba(83, 59, 35, .055) 59px 60px, transparent 61px 124px),
+        repeating-linear-gradient(116deg, transparent 0 88px, rgba(70, 86, 78, .045) 89px 90px, transparent 91px 154px),
+        linear-gradient(155deg, #fff2cb 0%, #ead09a 54%, #cfa363 100%);
+      border: 1px solid rgba(216, 177, 111, .9);
+      border-radius: 6px;
+      box-shadow:
+        0 24px 58px rgba(12, 8, 5, .48),
+        inset 0 0 92px rgba(72, 39, 15, .20),
+        inset 0 0 0 1px rgba(255, 250, 226, .36);
+    }
+    #sft-puzzle .sheet::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .48;
+      background:
+        radial-gradient(circle at 16% 22%, rgba(80, 48, 23, .16) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 34%, rgba(80, 48, 23, .12) 0 1px, transparent 2px),
+        linear-gradient(102deg, transparent 0 24%, rgba(93, 70, 42, .13) 24.2%, transparent 24.7%),
+        linear-gradient(8deg, transparent 0 71%, rgba(93, 70, 42, .08) 71.1%, transparent 71.7%),
+        repeating-radial-gradient(ellipse at 68% 46%, transparent 0 30px, rgba(56, 74, 70, .060) 31px 32px, transparent 33px 58px);
+      background-size: auto, auto, auto, auto, 430px 330px;
+      mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 92%, transparent 100%);
+    }
+    #sft-puzzle .sheet::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      pointer-events: none;
+      border: 1px solid rgba(89, 57, 29, .30);
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 247, 218, .13),
+        inset 0 0 38px rgba(77, 45, 21, .13);
+      border-radius: 4px;
+    }
+    #sft-puzzle header, #sft-puzzle main { position: relative; z-index: 2; }
+    #sft-puzzle .map-mark {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      color: rgba(105, 75, 47, .16);
+      font-weight: 800;
+      line-height: 1;
+    }
+    #sft-puzzle .map-mark.one {
+      right: -15px;
+      bottom: 30px;
+      font-size: 150px;
+      transform: rotate(-8deg);
+    }
+    #sft-puzzle .map-mark.two {
+      left: clamp(12px, 5vw, 34px);
+      bottom: 25px;
+      font-size: 64px;
+      color: rgba(138, 55, 41, .13);
+      transform: rotate(6deg);
+    }
+    #sft-puzzle .stamp {
+      position: absolute;
+      right: 24px;
+      top: 22px;
+      width: 74px;
+      height: 74px;
+      border: 3px double rgba(141,52,40,.26);
+      border-radius: 50%;
+      transform: rotate(9deg);
+      color: rgba(141,52,40,.30);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-weight: 700;
+      z-index: 1;
+    }
+    #sft-puzzle .eyebrow {
+      color: var(--rust-dark);
+      letter-spacing: .06em;
+      font-weight: 800;
+      margin: 0 105px 8px 0;
+      font-size: 13px;
+    }
+    #sft-puzzle h1 {
+      font-size: 36px;
+      line-height: 1.2;
+      margin: 0;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+    #sft-puzzle .rule {
+      height: 1px;
+      background: var(--ink);
+      margin: 18px 0 7px;
+      position: relative;
+    }
+    #sft-puzzle .rule::after {
+      content: "◆";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--paper-light);
+      padding: 0 10px;
+      color: var(--rust);
+      font-size: 11px;
+    }
+    #sft-puzzle .meta {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      color: var(--faded);
+      font-size: 15px;
+      line-height: 1.5;
+      margin: 12px 0 30px;
+    }
+    #sft-puzzle .status {
+      color: var(--rust-dark);
+      font-weight: 800;
+    }
+    #sft-puzzle .intro-card,
+    #sft-puzzle .mission-brief,
+    #sft-puzzle .route-stage,
+    #sft-puzzle .answer-stage,
+    #sft-puzzle .reveal {
+      animation: sftReveal .45s ease-out;
+    }
+    #sft-puzzle .intro-card {
+      margin: 22px 0 30px;
+      padding: 22px 0 12px;
+      border-top: 2px solid rgba(33,23,15,.72);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+    }
+    #sft-puzzle .phase-strip {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 26px;
+      padding: 14px 16px;
+      background: rgba(255, 246, 218, .32);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .22);
+      border-bottom: 1px solid rgba(95, 66, 36, .22);
+      font-size: 20px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle .phase-strip span { display: block; }
+    #sft-puzzle .year {
+      margin: 0 0 18px;
+      color: var(--rust-dark);
+      font-size: 22px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle .intro-card p,
+    #sft-puzzle .mission-copy,
+    #sft-puzzle .route-copy,
+    #sft-puzzle .answer-copy,
+    #sft-puzzle .letter {
+      font-size: 22px;
+      line-height: 1.78;
+      font-weight: 700;
+    }
+    #sft-puzzle .intro-card p {
+      margin: 0 0 18px;
+      font-size: 22px;
+      line-height: 1.72;
+      font-weight: 760;
+    }
+    #sft-puzzle .intro-card .quiet {
+      font-size: 22px;
+      font-weight: 650;
+    }
+    #sft-puzzle .mission-copy,
+    #sft-puzzle .route-copy,
+    #sft-puzzle .letter {
+      margin: 0 0 24px;
+      padding: 22px 0;
+      border-top: 1px solid rgba(70,47,25,.24);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+    }
+    #sft-puzzle .mission-copy p,
+    #sft-puzzle .route-copy p,
+    #sft-puzzle .answer-copy p,
+    #sft-puzzle .letter p { margin: 0 0 18px; }
+    #sft-puzzle .mission-copy p:last-child,
+    #sft-puzzle .route-copy p:last-child,
+    #sft-puzzle .answer-copy p:last-child,
+    #sft-puzzle .letter p:last-child { margin-bottom: 0; }
+    #sft-puzzle button {
+      min-height: 56px;
+      border: 1px solid var(--rust-dark);
+      color: var(--ink);
+      background: rgba(255,246,218,.60);
+      font: 700 20px/1.2 inherit;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 rgba(95,38,30,.17);
+      transition: transform .14s ease, background .14s ease, color .14s ease;
+    }
+    #sft-puzzle button:hover { transform: translateY(-2px); background: rgba(255,248,225,.94); }
+    #sft-puzzle button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(95,38,30,.17); }
+    #sft-puzzle button:disabled {
+      cursor: not-allowed;
+      opacity: .52;
+      transform: none;
+    }
+    #sft-puzzle button:focus-visible,
+    #sft-puzzle input:focus-visible {
+      outline: 3px solid rgba(138,55,41,.52);
+      outline-offset: 3px;
+    }
+    #sft-puzzle .step-button {
+      width: 100%;
+      margin: 16px 0 0;
+      background: var(--rust-dark);
+      color: var(--paper-light);
+      border-color: var(--rust-dark);
+      box-shadow: 0 8px 18px rgba(72, 37, 24, .22), 3px 3px 0 rgba(32,24,18,.16);
+    }
+    #sft-puzzle .step-button:hover {
+      background: #7a3025;
+      color: #fff4d8;
+    }
+    #sft-puzzle .scroll-cue {
+      margin: 16px 0 0;
+      color: var(--faded);
+      text-align: center;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    #sft-puzzle .mission-brief,
+    #sft-puzzle .route-stage,
+    #sft-puzzle .answer-stage,
+    #sft-puzzle .reveal { display: none; }
+    #sft-puzzle .mission-brief.show,
+    #sft-puzzle .route-stage.show,
+    #sft-puzzle .answer-stage.show,
+    #sft-puzzle .reveal.show { display: block; }
+    #sft-puzzle .trail-list {
+      display: grid;
+      gap: 12px;
+      margin: 0 0 24px;
+    }
+    #sft-puzzle .trail-item {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 13px;
+      padding: 15px 0;
+      border-top: 1px solid var(--line);
+    }
+    #sft-puzzle .trail-item:last-child { border-bottom: 1px solid var(--line); }
+    #sft-puzzle .trail-number {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--rust);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--rust-dark);
+      font-size: 19px;
+      font-weight: 700;
+    }
+    #sft-puzzle .trail-item label {
+      display: grid;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+    #sft-puzzle .trail-item small {
+      color: var(--faded);
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+    #sft-puzzle input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin: 4px 0 0;
+      accent-color: var(--olive);
+    }
+    #sft-puzzle .notice {
+      margin: 18px 0 20px;
+      padding: 18px 16px;
+      background: rgba(255, 246, 218, .34);
+      border-left: 5px solid var(--olive);
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+      font-size: 21px;
+      line-height: 1.75;
+      font-weight: 800;
+    }
+    #sft-puzzle .challenge-card {
+      margin: 6px 0 24px;
+      padding: 18px 16px 20px;
+      background:
+        linear-gradient(90deg, rgba(97,35,29,.10), transparent 46%),
+        rgba(255, 246, 218, .34);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+    }
+    #sft-puzzle .mission-kicker {
+      margin: 0 0 8px;
+      color: var(--rust-dark);
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+    #sft-puzzle .challenge-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.42;
+      font-weight: 850;
+    }
+    #sft-puzzle .challenge-title span { display: block; }
+    #sft-puzzle .challenge-note {
+      margin: 12px 0 0;
+      color: var(--faded);
+      font-size: 18px;
+      line-height: 1.65;
+      font-weight: 700;
+    }
+    #sft-puzzle .answers {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    #sft-puzzle .answer-field {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--rust-dark);
+      background: rgba(255, 246, 218, .42);
+      padding: 0 16px;
+    }
+    #sft-puzzle .answer-field input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font: 700 22px/1.2 inherit;
+      text-align: center;
+    }
+    #sft-puzzle .answer-field input::placeholder { color: rgba(41,33,24,.42); }
+    #sft-puzzle .answer-field span:not(.sr-only) {
+      color: var(--rust-dark);
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    #sft-puzzle .feedback {
+      min-height: 28px;
+      margin: 15px 0 0;
+      color: var(--rust-dark);
+      font-weight: 700;
+      letter-spacing: .04em;
+      font-size: 20px;
+      line-height: 1.65;
+    }
+    #sft-puzzle .feedback.ok { color: var(--olive); }
+    #sft-puzzle .hint-stack {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 0;
+    }
+    #sft-puzzle .hint {
+      padding: 13px 14px;
+      background: rgba(255, 246, 218, .42);
+      border-left: 4px solid var(--rust);
+      border-top: 1px solid rgba(95, 66, 36, .20);
+      border-bottom: 1px solid rgba(95, 66, 36, .20);
+      color: var(--faded);
+      font-size: 18px;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+    #sft-puzzle .seal-complete {
+      width: 114px;
+      height: 114px;
+      margin: 4px auto 24px;
+      border: 4px double var(--rust);
+      border-radius: 50%;
+      color: var(--rust);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: .12em;
+      transform: rotate(-7deg);
+    }
+    #sft-puzzle .reveal h2 {
+      font-size: 28px;
+      text-align: center;
+      margin: 0 0 22px;
+    }
+    #sft-puzzle .history {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      font-size: 20px;
+      line-height: 1.85;
+    }
+    #sft-puzzle .history h3 {
+      color: var(--rust-dark);
+      font-size: 21px;
+      margin: 20px 0 5px;
+    }
+    #sft-puzzle .history p { margin: 0 0 13px; }
+    #sft-puzzle .line-brief {
+      margin: 28px 0 0;
+      padding: 18px 16px;
+      background: rgba(255, 246, 218, .34);
+      border-left: 5px solid #06a846;
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+      font-size: 20px;
+      line-height: 1.75;
+      font-weight: 800;
+    }
+    #sft-puzzle .line-brief a {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 16px;
+      background: #06c755;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(0,0,0,.16);
+      box-shadow: 3px 3px 0 rgba(32,24,18,.16);
+      font-size: 18px;
+    }
+    #sft-puzzle .line-brief .report-next {
+      margin-top: 10px;
+      color: var(--rust-dark);
+      font-size: 24px;
+      line-height: 1.55;
+      font-weight: 850;
+    }
+    #sft-puzzle .evidence {
+      margin: 18px 0 24px;
+      padding: 8px;
+      background: rgba(255, 246, 218, .46);
+      border: 1px solid rgba(95, 66, 36, .24);
+      box-shadow: 3px 3px 0 rgba(95,38,30,.12);
+    }
+    #sft-puzzle .evidence img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid rgba(70, 47, 25, .22);
+      background: rgba(255, 240, 198, .56);
+    }
+    #sft-puzzle .evidence figcaption {
+      margin: 9px 3px 2px;
+      color: var(--faded);
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+    @keyframes sftReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      #sft-puzzle .sheet {
+        min-height: calc(100vh - 20px);
+        padding: 28px 19px 32px;
+      }
+      #sft-puzzle .stamp {
+        right: 14px;
+        top: 16px;
+        width: 64px;
+        height: 64px;
+        font-size: 24px;
+      }
+      #sft-puzzle .map-mark.one {
+        right: -16px;
+        bottom: 26px;
+        font-size: 128px;
+        color: rgba(105, 75, 47, .11);
+      }
+      #sft-puzzle .map-mark.two {
+        left: 16px;
+        bottom: 22px;
+        color: rgba(141, 52, 40, .10);
+      }
+      #sft-puzzle .eyebrow { margin-right: 78px; }
+      #sft-puzzle .meta { flex-direction: column; gap: 4px; margin-bottom: 24px; }
+      #sft-puzzle .answers { grid-template-columns: 1fr; }
+      #sft-puzzle button { min-height: 60px; }
+      #sft-puzzle .phase-strip { margin-bottom: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #sft-puzzle *, #sft-puzzle *::before, #sft-puzzle *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+
+  <section class="sheet" aria-labelledby="sft-title">
+    <div class="stamp" aria-hidden="true">二關</div>
+    <div class="map-mark one" aria-hidden="true">承</div>
+    <div class="map-mark two" aria-hidden="true">諾</div>
+    <header>
+      <p class="eyebrow">城市殘影調查檔案 SFT-02</p>
+      <h1 id="sft-title">守住市場承諾的人</h1>
+      <div class="rule"></div>
+      <div class="meta"><span class="status" id="sft-status">狀態：前言讀取</span></div>
+    </header>
+
+    <main>
+      <section class="intro-card" id="sft-intro">
+        <div class="phase-strip" aria-label="任務資料">
+          <span>第二關前言</span>
+          <span>任務代號：守住市場承諾的人</span>
+        </div>
+        <p class="year">第二關｜守住市場承諾的人</p>
+        <p>你找到市場的心臟了。</p>
+        <p>從前，它比附近許多建築都高。</p>
+        <p class="quiet">有人靠它認路，也有人靠它記住市場的方向。</p>
+        <p>有人說，只要站在它底下，就能聽見市場百年的聲音：</p>
+        <p>魚販的叫賣、竹籃碰撞的聲音，還有清晨貨車卸下一箱箱水果的聲音。</p>
+        <button class="step-button" id="sft-open-mission" type="button">接收第二關任務</button>
+        <p class="scroll-cue">下一步：讀取市場記憶</p>
+      </section>
+
+      <section class="mission-brief" id="sft-mission-brief">
+        <div class="phase-strip" aria-label="第二關資料">
+          <span>任務故事</span>
+          <span>目標任務：找到守護承諾的人</span>
+        </div>
+        <div class="mission-copy">
+          <p>但是，市場光有方向還不夠。</p>
+          <p>做生意的人怕走錯路，更怕失去別人的信任。</p>
+          <p>我記得，那些水果商總在天還沒亮時抵達市場。</p>
+          <p>香蕉、柑橘與進口水果一箱箱搬進來；帳本翻開、秤錘落下，價格被喊出的那一刻，被放上交易桌面的，不只是貨物，還有一個人的信用。</p>
+          <p>所以，市場裡需要一位懂得忠義、守護承諾的人，替商人守住那條看不見的界線。</p>
+        </div>
+        <button class="step-button" id="sft-start-route" type="button">解鎖任務</button>
+        <p class="scroll-cue">下一步：讓市場氣味帶路</p>
+      </section>
+
+      <section class="route-stage" id="sft-route-stage">
+        <div class="phase-strip" aria-label="路線資料">
+          <span>解鎖任務</span>
+          <span>確認三個市場訊號</span>
+        </div>
+        <div class="route-copy">
+          <p>接下來要找的地方不在最高處，而藏在市場更深處。</p>
+          <p>從六角樓離開後，讓水果攤替你帶路。</p>
+          <p>如果途中聞到滷肉飯的香氣，不必懷疑，你仍走在正確的方向。</p>
+          <p>若再看見一味臺中人熟悉的綠色家常味——麻薏，代表那位守護市場信用的人，就在附近了。</p>
+        </div>
+
+        <p class="notice">請依序在現場確認下列三個訊號。每確認一項，就勾選一次；三項都完成後，才能繼續。</p>
+        <div class="trail-list" aria-label="路線確認">
+          <div class="trail-item">
+            <div class="trail-number">①</div>
+            <label><input type="checkbox" data-trail> 水果攤 <small>從六角樓離開後，讓水果攤替你帶路。</small></label>
+          </div>
+          <div class="trail-item">
+            <div class="trail-number">②</div>
+            <label><input type="checkbox" data-trail> 滷肉飯 <small>如果途中聞到滷肉飯的香氣，不必懷疑，你仍走在正確的方向。</small></label>
+          </div>
+          <div class="trail-item">
+            <div class="trail-number">③</div>
+            <label><input type="checkbox" data-trail> 麻薏 <small>若再看見這味臺中人熟悉的綠色家常味，代表目標就在附近。</small></label>
+          </div>
+        </div>
+
+        <p class="notice" id="sft-route-notice">目前尚未完成三個訊號確認。</p>
+        <button class="step-button" id="sft-arrive" type="button" disabled>三個訊號都確認了</button>
+      </section>
+
+      <section class="answer-stage" id="sft-answer-stage">
+        <div class="challenge-card">
+          <p class="mission-kicker">玩家任務</p>
+          <h2 class="challenge-title"><span>抬頭尋找</span><span>正式名稱</span></h2>
+          <p class="challenge-note">找到這座藏在第二市場裡的地點。抵達後，請抬頭尋找正式名稱。</p>
+        </div>
+
+        <div class="letter">
+          <p>抵達後，請抬頭尋找正式名稱。</p>
+          <p>把你看到的名字寫下來。</p>
+        </div>
+
+        <p class="notice">請輸入你看到的正式名稱。</p>
+        <form class="answers" id="sft-answer-form">
+          <label class="answer-field">
+            <span class="sr-only">請輸入第二關答案</span>
+            <input id="sft-answer-input" type="text" inputmode="text" autocomplete="off" placeholder="正式名稱" aria-label="正式名稱">
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" id="sft-answer-feedback" aria-live="polite"></p>
+        <button class="step-button" id="sft-hint-button" type="button">需要一點提示</button>
+        <div class="hint-stack" id="sft-hints" aria-live="polite"></div>
+      </section>
+
+      <section class="reveal" id="sft-reveal" aria-live="polite">
+        <div class="seal-complete">檔案<br>解封</div>
+        <h2>武德宮</h2>
+        <div class="history">
+          <p><strong>武德宮介紹</strong></p>
+          <p><strong>臺中第二市場武德宮的建立，源自於一場民國35年（1946年）的嚴重旱災與神蹟傳說。</strong></p>
+          <p>以下是關於這座「市場守護神」誕生的傳奇故事：</p>
+          <h3>旱災結緣</h3>
+          <p><strong>古井枯竭與媽祖祈雨</strong> 二戰結束後的隔年（1946年），臺灣中部遭遇了極為嚴重的旱災。當時第二市場（舊稱新富町市場）內維繫攤商與居民生活的數口深水井全部乾涸，市場面臨嚴重的用水與公共衛生危機。</p>
+          <p>在束手無策的情況下，市場內的地方長者與攤商們決定向神明求助。他們前往當時臺中香火鼎盛的「萬春宮」，恭迎藍興媽祖（市場媽）來到第二市場內安座，並由全體攤商齊心設壇、虔誠祈雨。</p>
+          <p>說也神奇，祈雨儀式過後不久，天空果真降下甘霖，市場內原本枯竭的井水也重新泉湧而出，解決了燃眉之急。</p>
+          <figure class="evidence">
+            <img src="https://drive.google.com/thumbnail?id=1qZdNmGo3Sb3e9_04QntVAcApRwNzqLSK&sz=w1000" alt="旱災結緣影像檔案" loading="lazy">
+            <figcaption>影像檔案：旱災結緣</figcaption>
+          </figure>
+          <h3>關帝顯聖：黑面聖帝的由來</h3>
+          <p>在媽祖祈雨靈驗後，信眾為了答謝神恩，決定在市場內正式建廟奉祀。然而，在商討主祀神明時，地方耆老與攤商們認為，市場作為商業貿易之地，最需要象徵「誠信、正義與招財」的守護神，於是決定迎請關聖帝君（武聖關公）為主神。</p>
+          <p>在雕刻神像時，還流傳著一個傳說：相傳當時的雕刻師傅在著色時，原本要依循傳統將關公的面貌畫為紅面。但據傳關帝君顯聖託夢，指示因其要長期在喧囂、油煙重的市場中庇佑眾生，因而要求將神像雕刻為「黑面」。</p>
+          <p>也有說法是長年香火薰染而變黑。這尊黑面關聖帝君，自此成為第二市場獨特的信仰象徵。</p>
+          <figure class="evidence">
+            <img src="https://drive.google.com/thumbnail?id=1EwLgi8tW_Fh0wNybk1SQZnNl82bgQXtk&sz=w1000" alt="黑面聖帝影像檔案" loading="lazy">
+            <figcaption>影像檔案：黑面聖帝</figcaption>
+          </figure>
+        </div>
+        <div class="line-brief">
+          <p><strong>請回到 LINE，輸入「取得信用」。</strong></p>
+          <p class="report-next"><strong>回報完成後，將取得下一關任務信。</strong></p>
+          <a href="https://lin.ee/o8PbMHy" target="_blank" rel="noopener">前往 LINE 回報</a>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.getElementById('sft-puzzle');
+      const intro = root.querySelector('#sft-intro');
+      const missionBrief = root.querySelector('#sft-mission-brief');
+      const routeStage = root.querySelector('#sft-route-stage');
+      const answerStage = root.querySelector('#sft-answer-stage');
+      const reveal = root.querySelector('#sft-reveal');
+      const status = root.querySelector('#sft-status');
+      const routeNotice = root.querySelector('#sft-route-notice');
+      const arriveButton = root.querySelector('#sft-arrive');
+      const trailChecks = [...root.querySelectorAll('[data-trail]')];
+      const answerForm = root.querySelector('#sft-answer-form');
+      const answerInput = root.querySelector('#sft-answer-input');
+      const answerFeedback = root.querySelector('#sft-answer-feedback');
+      const hintButton = root.querySelector('#sft-hint-button');
+      const hints = root.querySelector('#sft-hints');
+      const hintTexts = [
+        '提示一：答案在正式名稱裡，不是人物的名字。',
+        '提示二：請抬頭找名稱標示。',
+        '提示三：答案不在商品、攤位或旁邊物件上。',
+        '提示四：第一個字指向那位武聖的身份；第二個字指向承諾與品行。'
+      ];
+      let hintStep = 0;
+
+      function show(target, label, focusTarget) {
+        [intro, missionBrief, routeStage, answerStage, reveal].forEach(section => {
+          section.classList.toggle('show', section === target);
+          if (section === intro) section.hidden = target !== intro;
+          else section.hidden = false;
+        });
+        status.textContent = `狀態：${label}`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.setTimeout(() => focusTarget?.focus(), 80);
+      }
+
+      function normalize(value) {
+        return value
+          .trim()
+          .replace(/[「」『』"'，。！？、\s]/g, '')
+          .replace(/宫/g, '宮');
+      }
+
+      root.querySelector('#sft-open-mission').addEventListener('click', () => {
+        show(missionBrief, '任務信讀取', root.querySelector('#sft-start-route'));
+      });
+
+      root.querySelector('#sft-start-route').addEventListener('click', () => {
+        show(routeStage, '市場訊號確認', arriveButton);
+      });
+
+      trailChecks.forEach(check => {
+        check.addEventListener('change', () => {
+          const complete = trailChecks.every(item => item.checked);
+          arriveButton.disabled = !complete;
+          routeNotice.textContent = complete
+            ? '三個市場訊號都出現了。現在請繼續前往那位守護承諾的人所在之處。'
+            : '目前尚未完成三個訊號確認。';
+        });
+      });
+
+      arriveButton.addEventListener('click', () => {
+        show(answerStage, '確認正式名稱', answerInput);
+      });
+
+      answerForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const answer = normalize(answerInput.value);
+        const accepted = ['武德', '武德宮'];
+        const tooBroad = ['財', '錢', '神', '市場', '關公', '關聖帝君', '媽祖', '藍興媽祖', '萬春宮', '信用', '誠信', '忠義'];
+
+        answerFeedback.classList.remove('ok');
+        if (accepted.includes(answer)) {
+          answerFeedback.textContent = '答案正確。武德宮地點檔案已解封。';
+          answerFeedback.classList.add('ok');
+          answerInput.disabled = true;
+          answerForm.querySelector('button').disabled = true;
+          window.setTimeout(() => show(reveal, '檔案解封', null), 650);
+        } else if (!answer) {
+          answerFeedback.textContent = '請先寫下你看到的正式名稱。';
+          answerInput.focus();
+        } else if (tooBroad.includes(answer)) {
+          answerFeedback.textContent = '你靠近現場了，但這題問的是正式名稱，不是神明、信仰意義或市場概念。';
+          answerInput.select();
+        } else {
+          answerFeedback.textContent = '這個名字還沒有吻合。請抬頭看正式名稱。';
+          answerInput.select();
+        }
+      });
+
+      hintButton.addEventListener('click', () => {
+        if (hintStep >= hintTexts.length) return;
+        const hint = document.createElement('div');
+        hint.className = 'hint';
+        hint.textContent = hintTexts[hintStep];
+        hints.appendChild(hint);
+        hintStep += 1;
+        hintButton.textContent = hintStep >= hintTexts.length ? '提示已全部開啟' : '再給我一點提示';
+        hintButton.disabled = hintStep >= hintTexts.length;
+      });
+    })();
+  </script>
+</div>
+</body>
+</html>
