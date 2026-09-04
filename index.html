@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="新富町六道光芒互動解謎">
+  <title>六道光芒｜城市殘影調查檔案</title>
+</head>
+<body>
+<div id="sft-puzzle">
+  <style>
+    html { background: #211915; }
+    body {
+      margin: 0;
+      padding: 14px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(142, 86, 43, .28), transparent 52%),
+        linear-gradient(150deg, #3a2a20 0%, #211915 54%, #15100d 100%);
+    }
+    #sft-puzzle {
+      --ink: #21170f;
+      --paper: #e6c88f;
+      --paper-light: #fff0c6;
+      --paper-deep: #c99f60;
+      --rust: #8d3428;
+      --rust-dark: #61231d;
+      --olive: #47614d;
+      --line: rgba(70, 47, 25, .30);
+      --faded: #6c573c;
+      color: var(--ink);
+      font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    #sft-puzzle * { box-sizing: border-box; }
+    #sft-puzzle .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    #sft-puzzle .sheet {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 28px);
+      padding: 30px 22px 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.20), transparent 18%),
+        radial-gradient(ellipse at 18% 4%, rgba(255, 249, 221, .76), transparent 34%),
+        radial-gradient(ellipse at 82% 86%, rgba(112, 70, 34, .18), transparent 42%),
+        repeating-linear-gradient(28deg, transparent 0 58px, rgba(83, 59, 35, .055) 59px 60px, transparent 61px 124px),
+        repeating-linear-gradient(116deg, transparent 0 88px, rgba(70, 86, 78, .045) 89px 90px, transparent 91px 154px),
+        linear-gradient(155deg, #fff2cb 0%, #ead09a 54%, #cfa363 100%);
+      border: 1px solid rgba(216, 177, 111, .9);
+      border-radius: 6px;
+      box-shadow:
+        0 24px 58px rgba(12, 8, 5, .48),
+        inset 0 0 92px rgba(72, 39, 15, .20),
+        inset 0 0 0 1px rgba(255, 250, 226, .36);
+    }
+    #sft-puzzle .sheet::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .48;
+      background:
+        radial-gradient(circle at 16% 22%, rgba(80, 48, 23, .16) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 34%, rgba(80, 48, 23, .12) 0 1px, transparent 2px),
+        linear-gradient(102deg, transparent 0 24%, rgba(93, 70, 42, .13) 24.2%, transparent 24.7%),
+        linear-gradient(8deg, transparent 0 71%, rgba(93, 70, 42, .08) 71.1%, transparent 71.7%),
+        repeating-radial-gradient(ellipse at 68% 46%, transparent 0 30px, rgba(56, 74, 70, .060) 31px 32px, transparent 33px 58px);
+      background-size: auto, auto, auto, auto, 430px 330px;
+      mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 92%, transparent 100%);
+    }
+    #sft-puzzle .sheet::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      pointer-events: none;
+      border: 1px solid rgba(89, 57, 29, .30);
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 247, 218, .13),
+        inset 0 0 38px rgba(77, 45, 21, .13);
+      border-radius: 4px;
+    }
+    #sft-puzzle .map-mark {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      color: rgba(105, 75, 47, .16);
+      font-weight: 800;
+      line-height: 1;
+    }
+    #sft-puzzle .map-mark.one {
+      right: -10px;
+      bottom: 34px;
+      font-size: 150px;
+      transform: rotate(-8deg);
+    }
+    #sft-puzzle .map-mark.two {
+      left: clamp(12px, 5vw, 34px);
+      bottom: 28px;
+      font-size: 64px;
+      color: rgba(138, 55, 41, .13);
+      transform: rotate(6deg);
+    }
+    #sft-puzzle .stamp {
+      position: absolute;
+      right: 24px;
+      top: 22px;
+      width: 74px;
+      height: 74px;
+      border: 3px double rgba(141,52,40,.26);
+      border-radius: 50%;
+      transform: rotate(9deg);
+      color: rgba(141,52,40,.30);
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      font-weight: 700;
+      z-index: 1;
+    }
+    #sft-puzzle .intro-card {
+      margin: 22px 0 30px;
+      padding: 22px 0 12px;
+      border-top: 2px solid rgba(33,23,15,.72);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+      animation: sftReveal .45s ease-out;
+    }
+    #sft-puzzle .phase-strip {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 26px;
+      padding: 14px 16px;
+      background: rgba(255, 246, 218, .32);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .22);
+      border-bottom: 1px solid rgba(95, 66, 36, .22);
+      font-size: clamp(17px, 4.5vw, 22px);
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle .phase-strip span {
+      display: block;
+    }
+    #sft-puzzle .year {
+      margin: 0 0 18px;
+      color: var(--rust-dark);
+      font-size: clamp(22px, 5.6vw, 29px);
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle .intro-card p {
+      margin: 0 0 18px;
+      font-size: clamp(22px, 5.7vw, 31px);
+      line-height: 1.72;
+      font-weight: 760;
+    }
+    #sft-puzzle .intro-card .quiet {
+      font-size: clamp(19px, 5vw, 26px);
+      font-weight: 650;
+    }
+    #sft-puzzle .mission-brief {
+      display: none;
+      animation: sftReveal .45s ease-out;
+    }
+    #sft-puzzle .mission-brief.show { display: block; }
+    #sft-puzzle .mission-copy {
+      margin: 0 0 24px;
+      padding: 22px 0;
+      border-top: 1px solid rgba(70,47,25,.24);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+      font-size: clamp(21px, 5.5vw, 29px);
+      line-height: 1.78;
+      font-weight: 700;
+    }
+    #sft-puzzle .mission-copy p { margin: 0 0 18px; }
+    #sft-puzzle .mission-copy p:last-child { margin-bottom: 0; }
+    #sft-puzzle .step-button {
+      width: 100%;
+      margin: 16px 0 0;
+      background: var(--rust-dark);
+      color: var(--paper-light);
+      border-color: var(--rust-dark);
+      box-shadow: 0 8px 18px rgba(72, 37, 24, .22), 3px 3px 0 rgba(32,24,18,.16);
+    }
+    #sft-puzzle .step-button:hover {
+      background: #7a3025;
+      color: #fff4d8;
+    }
+    #sft-puzzle .scroll-cue {
+      margin: 16px 0 0;
+      color: var(--faded);
+      text-align: center;
+      font-size: clamp(16px, 4vw, 20px);
+      font-weight: 700;
+    }
+    #sft-puzzle header, #sft-puzzle main { position: relative; z-index: 2; }
+    #sft-puzzle .eyebrow {
+      color: var(--rust-dark);
+      letter-spacing: .06em;
+      font-weight: 800;
+      margin: 0 105px 8px 0;
+      font-size: 13px;
+    }
+    #sft-puzzle h1 {
+      font-size: clamp(34px, 9vw, 44px);
+      line-height: 1.2;
+      margin: 0;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+    #sft-puzzle .rule {
+      height: 1px;
+      background: var(--ink);
+      margin: 18px 0 7px;
+      position: relative;
+    }
+    #sft-puzzle .rule::after {
+      content: "◆";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--paper-light);
+      padding: 0 10px;
+      color: var(--rust);
+      font-size: 11px;
+    }
+    #sft-puzzle .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--faded);
+      font-size: 15px;
+      line-height: 1.5;
+      margin: 12px 0 30px;
+    }
+    #sft-puzzle .status {
+      color: var(--rust-dark);
+      font-weight: 800;
+    }
+    #sft-puzzle .prompt {
+      font-size: clamp(21px, 5.4vw, 28px);
+      line-height: 1.8;
+      margin: 0 0 24px;
+      font-weight: 600;
+    }
+    #sft-puzzle .progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: var(--faded);
+      font-size: 16px;
+    }
+    #sft-puzzle .progress-line { display: flex; gap: 7px; flex: 1; }
+    #sft-puzzle .progress-line i {
+      display: block;
+      height: 4px;
+      flex: 1;
+      background: rgba(81,62,38,.18);
+    }
+    #sft-puzzle .progress-line i.done { background: var(--rust); }
+    #sft-puzzle .clue {
+      min-height: 122px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 23px 0 18px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      animation: sftReveal .35s ease-out;
+    }
+    #sft-puzzle .number {
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--rust);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--rust-dark);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    #sft-puzzle .clue-text {
+      margin: 0;
+      font-size: clamp(23px, 6vw, 32px);
+      line-height: 1.65;
+      font-weight: 600;
+    }
+    #sft-puzzle .answers {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    #sft-puzzle .answer-field {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--rust-dark);
+      background: rgba(255, 246, 218, .42);
+      padding: 0 16px;
+    }
+    #sft-puzzle .answer-field input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font: 700 25px/1.2 inherit;
+      text-align: center;
+    }
+    #sft-puzzle .answer-field input::placeholder { color: rgba(41,33,24,.42); }
+    #sft-puzzle .answer-field span { font-size: 25px; font-weight: 700; }
+    #sft-puzzle button {
+      min-height: 56px;
+      border: 1px solid var(--rust-dark);
+      color: var(--ink);
+      background: rgba(255,246,218,.60);
+      font: 700 20px/1.2 inherit;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 rgba(95,38,30,.17);
+      transition: transform .14s ease, background .14s ease, color .14s ease;
+    }
+    #sft-puzzle button:hover { transform: translateY(-2px); background: rgba(255,248,225,.94); }
+    #sft-puzzle button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(95,38,30,.17); }
+    #sft-puzzle button:focus-visible,
+    #sft-puzzle a:focus-visible {
+      outline: 3px solid rgba(138,55,41,.52);
+      outline-offset: 3px;
+    }
+    #sft-puzzle .feedback {
+      min-height: 28px;
+      margin: 15px 0 0;
+      color: var(--rust-dark);
+      font-weight: 700;
+      letter-spacing: .04em;
+      font-size: clamp(18px, 4.8vw, 24px);
+      line-height: 1.65;
+    }
+    #sft-puzzle .feedback a {
+      display: inline-block;
+      margin: 14px 0 6px;
+      padding: 10px 16px;
+      background: #06c755;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(0,0,0,.16);
+      box-shadow: 3px 3px 0 rgba(32,24,18,.16);
+      font-size: clamp(17px, 4.4vw, 21px);
+      letter-spacing: 0;
+    }
+    #sft-puzzle .feedback .read-more {
+      background: var(--rust-dark);
+      color: var(--paper-light);
+    }
+    #sft-puzzle .reveal { display: none; animation: sftReveal .7s ease-out; }
+    #sft-puzzle .reveal.show { display: block; }
+    #sft-puzzle .seal-complete {
+      width: 114px;
+      height: 114px;
+      margin: 4px auto 24px;
+      border: 4px double var(--rust);
+      border-radius: 50%;
+      color: var(--rust);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: .12em;
+      transform: rotate(-7deg);
+    }
+    #sft-puzzle .reveal h2 {
+      font-size: clamp(26px, 5vw, 36px);
+      text-align: center;
+      margin: 0 0 22px;
+    }
+    #sft-puzzle .history {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      font-size: clamp(18px, 4.7vw, 24px);
+      line-height: 1.85;
+    }
+    #sft-puzzle .history h3 {
+      color: var(--rust-dark);
+      font-size: 21px;
+      margin: 20px 0 5px;
+    }
+    #sft-puzzle .history p { margin: 0 0 13px; }
+    #sft-puzzle .mosaic {
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      height: 20px;
+      gap: 2px;
+      margin: 24px 0;
+    }
+    #sft-puzzle .mosaic span:nth-child(3n+1) { background:#527988; }
+    #sft-puzzle .mosaic span:nth-child(3n+2) { background:#e9e2cf; }
+    #sft-puzzle .mosaic span:nth-child(3n) { background:#83a0a0; }
+    #sft-puzzle .next-button {
+      width: 100%;
+      margin-top: 18px;
+      background: var(--rust-dark);
+      color: var(--paper-light);
+      border-color: var(--rust-dark);
+    }
+    #sft-puzzle .next-stage { display: none; animation: sftReveal .7s ease-out; }
+    #sft-puzzle .next-stage.show { display: block; }
+    #sft-puzzle .building-info { display: none; animation: sftReveal .7s ease-out; }
+    #sft-puzzle .building-info.show { display: block; }
+    #sft-puzzle .challenge-card {
+      margin: 6px 0 24px;
+      padding: 18px 16px 20px;
+      background:
+        linear-gradient(90deg, rgba(97,35,29,.10), transparent 46%),
+        rgba(255, 246, 218, .34);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+    }
+    #sft-puzzle .mission-kicker {
+      margin: 0 0 8px;
+      color: var(--rust-dark);
+      font-size: clamp(17px, 4.4vw, 21px);
+      line-height: 1.5;
+      font-weight: 800;
+    }
+    #sft-puzzle .challenge-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(27px, 7vw, 38px);
+      line-height: 1.42;
+      font-weight: 850;
+    }
+    #sft-puzzle .challenge-title span {
+      display: block;
+    }
+    #sft-puzzle .challenge-note {
+      margin: 12px 0 0;
+      color: var(--faded);
+      font-size: clamp(17px, 4.4vw, 21px);
+      line-height: 1.65;
+      font-weight: 700;
+    }
+    #sft-puzzle .congrats {
+      color: var(--rust-dark);
+      font-size: clamp(20px, 5vw, 27px);
+      line-height: 1.65;
+      font-weight: 700;
+      margin: 0 0 22px;
+    }
+    #sft-puzzle .letter {
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: clamp(20px, 5vw, 28px);
+      line-height: 1.9;
+    }
+    #sft-puzzle .letter p { margin: 0; }
+    #sft-puzzle .info-article {
+      padding: 6px 0 0;
+      font-size: clamp(18px, 4.7vw, 23px);
+      line-height: 1.82;
+    }
+    #sft-puzzle .info-article h3 {
+      margin: 28px 0 8px;
+      color: var(--rust-dark);
+      font-size: clamp(22px, 5.4vw, 28px);
+      line-height: 1.45;
+    }
+    #sft-puzzle .info-article p {
+      margin: 0 0 16px;
+    }
+    #sft-puzzle .line-brief {
+      margin: 28px 0 0;
+      padding: 18px 16px;
+      background: rgba(255, 246, 218, .34);
+      border-left: 5px solid #06a846;
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+      font-size: clamp(18px, 4.8vw, 24px);
+      line-height: 1.75;
+      font-weight: 800;
+    }
+    #sft-puzzle .line-brief a {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 16px;
+      background: #06c755;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(0,0,0,.16);
+      box-shadow: 3px 3px 0 rgba(32,24,18,.16);
+      font-size: clamp(17px, 4.4vw, 21px);
+    }
+    #sft-puzzle .final-question {
+      margin: 25px 0 10px;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+    }
+    @keyframes sftReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      #sft-puzzle .sheet {
+        min-height: calc(100vh - 20px);
+        padding: 28px 19px 32px;
+      }
+      #sft-puzzle .stamp {
+        right: 14px;
+        top: 16px;
+        width: 64px;
+        height: 64px;
+        font-size: 26px;
+      }
+      #sft-puzzle .map-mark.one {
+        right: -16px;
+        bottom: 26px;
+        font-size: 128px;
+        color: rgba(105, 75, 47, .11);
+      }
+      #sft-puzzle .map-mark.two {
+        left: 16px;
+        bottom: 22px;
+        color: rgba(141, 52, 40, .10);
+      }
+      #sft-puzzle .eyebrow { margin-right: 78px; }
+      #sft-puzzle .meta { flex-direction: column; gap: 4px; margin-bottom: 24px; }
+      #sft-puzzle .answers { grid-template-columns: 1fr; }
+      #sft-puzzle .clue { gap: 12px; }
+      #sft-puzzle button { min-height: 60px; }
+      #sft-puzzle .phase-strip { margin-bottom: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #sft-puzzle *, #sft-puzzle *::before, #sft-puzzle *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+
+  <section class="sheet" aria-labelledby="sft-title">
+    <div class="stamp" aria-hidden="true">六通</div>
+    <div class="map-mark one" aria-hidden="true">六</div>
+    <div class="map-mark two" aria-hidden="true">町</div>
+    <header>
+      <p class="eyebrow">城市殘影調查檔案 SFT-01</p>
+      <h1 id="sft-title">六道光芒</h1>
+      <div class="rule"></div>
+      <div class="meta"><span>搜尋目標：市場的心臟</span><span class="status" id="sft-status">狀態：前言讀取</span></div>
+    </header>
+
+    <main>
+      <section class="intro-card" id="sft-intro">
+        <div class="phase-strip" aria-label="任務資料">
+          <span>任務代號：六道光芒</span>
+          <span>搜尋目標：市場的心臟</span>
+        </div>
+        <p class="year">大正6年（1917年）</p>
+        <p>我年輕時，常從這裡走進市場。</p>
+        <p class="quiet">那時，新富町通上樹影整齊、街屋明亮。穿西裝的人、挑貨的人、買菜的人，都朝著同一個方向走去。</p>
+        <p>他們說，真正認得市場的人，不是從門口開始認路，</p>
+        <p>而是先找到市場的心臟。</p>
+        <p>你也去找它吧。</p>
+        <button class="step-button" id="sft-open-mission" type="button">接收第一關任務</button>
+        <p class="scroll-cue">下一步：讀取任務信</p>
+      </section>
+
+      <section class="mission-brief" id="sft-mission-brief">
+        <div class="phase-strip" aria-label="第一關資料">
+          <span>第一關：方向判讀</span>
+          <span>目標任務：尋找市場的祝福</span>
+        </div>
+        <div class="mission-copy">
+          <p>先讓水果的氣味帶你往前。</p>
+          <p>在攤販之間，留意那個知道六個方向的地方。這裡是市場的心臟。</p>
+          <p>眼前的六角柱守著六條道路，每一條道路都藏著第二市場曾經擁有的祝福。</p>
+          <p>但真正的出口，不在地圖上。</p>
+          <p>唯有替六道光芒找回正確的名字，才能辨認下一步的方向。</p>
+        </div>
+        <button class="step-button" id="sft-start-puzzle" type="button">開始辨認六道光芒</button>
+        <p class="scroll-cue">下一步：觀察廊柱並回答線索</p>
+      </section>
+
+      <div id="sft-game" hidden>
+        <div class="phase-strip" aria-label="解謎資料">
+          <span>任務一：六道光芒</span>
+          <span>請替祝福找回顏色</span>
+        </div>
+        <p class="prompt">請觀察廊柱，找出其中祝福所代表的顏色。</p>
+        <div class="progress" aria-label="解謎進度">
+          <span id="sft-progress-text">第 1 題，共 3 題</span>
+          <div class="progress-line" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <div class="clue" id="sft-clue">
+          <div class="number" id="sft-number">①</div>
+          <p class="clue-text" id="sft-clue-text"></p>
+        </div>
+        <form class="answers" id="sft-answers">
+          <label class="answer-field">
+            <span class="sr-only">請輸入代表祝福的顏色</span>
+            <input id="sft-input" type="text" inputmode="text" autocomplete="off" placeholder="＿＿＿" aria-label="顏色答案">
+            <span aria-hidden="true">色</span>
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" id="sft-feedback" aria-live="polite"></p>
+      </div>
+
+      <section class="reveal" id="sft-reveal" aria-live="polite">
+        <div class="seal-complete">檔案<br>解封</div>
+        <h2>六條通廊柱</h2>
+        <div class="history">
+          <p><strong>空間美學：</strong>市場中央的廊柱是「六條通」的軸心，展現了日治時期理性、對稱且具秩序感的公共建築美學。當時的柱體是粗獷、樸實的磚石原色。</p>
+          <div class="mosaic" aria-hidden="true"></div>
+          <h3>台式美學「馬賽克混搭生活學」</h3>
+          <p>1970 年代，為了改善傳統市場的衛生，核心柱面與洗手台被貼上了<strong>藍白相間的馬賽克磁磚</strong>。這種磁磚耐磨、防潮、好擦拭，完美解決了市場油污與血水問題。</p>
+          <p>這種藍白（或粉綠、土黃）的顆粒拼貼，是那個時代最具代表性的台灣居家與公共空間符號。它打破了日治紅磚的沉穩，注入了屬於戰後台灣蓬勃、略帶草根氣息的現代感。</p>
+        </div>
+        <button class="next-button" id="sft-next" type="button">準備好接受下一個挑戰了嗎？</button>
+      </section>
+
+      <section class="next-stage" id="sft-next-stage" aria-live="polite">
+        <div class="challenge-card">
+          <p class="mission-kicker">新任務檔案已解鎖</p>
+          <h2 class="challenge-title"><span>任務二：</span><span>尋找執行地點</span></h2>
+          <p class="challenge-note">你已完成方向判讀。接下來，請依照提示找到真正執行任務的建築物。</p>
+        </div>
+        <div class="letter">
+          <p>看見柱廊以後，不要急著走大路。<br>
+          往旁邊那條窄窄的小巷去。<br>
+          巷子看起來不像入口，<br>
+          但新富町很多重要的事，從來都藏在不起眼的地方。<br><br>
+          走進去後，請停一下。<br>
+          不要看攤位，也不要看招牌。<br>
+          抬頭。<br><br>
+          如果你看見一座有稜有角、像老市場守望者一樣的東西，<br>
+          就把它的名字寫下來。<br>
+          第一段記憶，就在那裡等你。</p>
+        </div>
+        <p class="final-question">請問它的名字是？</p>
+        <form class="answers" id="sft-building-form">
+          <label class="answer-field">
+            <span class="sr-only">請輸入建築物名稱</span>
+            <input id="sft-building-input" type="text" autocomplete="off" placeholder="輸入建築物名稱" aria-label="建築物名稱">
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" id="sft-building-feedback" aria-live="polite"></p>
+      </section>
+
+      <section class="building-info" id="sft-building-info" aria-live="polite">
+        <div class="challenge-card">
+          <p class="mission-kicker">地點檔案已開啟</p>
+          <h2 class="challenge-title"><span>六角樓：</span><span>市場的方向核心</span></h2>
+          <p class="challenge-note">閱讀完成後，請回到 LINE 回報任務狀態。</p>
+        </div>
+
+        <article class="info-article">
+          <h3>放射狀的市場格局</h3>
+          <p>台中第二市場的六角樓是日治時期市場建築中相當珍貴的遺構，也是今日第二市場最具辨識度的地標。</p>
+          <p>六角樓最鮮明的特色，是以中央六角形主樓為核心，向外延伸出多條通道，形成放射狀的市場配置。這樣的設計讓市場動線清楚，攤商分布也更容易管理。無論從哪個入口進入市場，最終都會匯集到中央的六角樓，使它成為整個市場空間的視覺與動線中心。</p>
+
+          <h3>中央主樓的建築型態</h3>
+          <p>六角樓以六角形量體作為核心，屋頂也呈現放射狀延伸，具有強烈的幾何秩序與空間辨識度。其屋頂結構向下連接廊柱，形成兼具遮蔽、通行與聚集功能的市場節點。</p>
+          <p>這種以中央樓體統整市場空間的設計，在日治時期市場建築中相當少見，也展現出當時對公共市場秩序、衛生與管理效率的重視。部分資料指出，六角樓的建築語彙帶有西式歷史風格的影響，例如紅磚、塔樓意象與立面裝飾，使其不只是市場設施，也具備城市地標的象徵性。</p>
+
+          <h3>瞭望與防火的機能設計</h3>
+          <p>六角樓在日治時期曾是台中市中區一帶的重要制高點，除了作為市場核心，也具有管理與瞭望功能。管理者可藉由較高的樓體掌握市場營業狀況，同時在火災發生時也能及早察覺，具備防災預警的作用。</p>
+          <p>從早期規劃來看，市場軸線兼具營業、通行與管理用途。雖然今日空間多已轉為商店與攤位使用，但仍可從平面格局中看出當年放射狀市場設計的痕跡。</p>
+
+          <h3>歷史沿革與保存現況</h3>
+          <p>台中第二市場於1917年11月開設，1918年初大致完工。1936年市場曾發生火災，之後進行整修與改建，六角樓也成為市場核心建築之一。</p>
+          <p>至今，六角樓仍保留日治時期市場建築的空間特色與歷史記憶，是台中市區少見且珍貴的市場建築遺構。雖然六角樓目前尚未列入歷史建築，但其建築形式、空間格局與城市記憶都具有重要保存價值，也使第二市場不只是飲食與採買場所，更是理解台中都市發展的重要現場。</p>
+        </article>
+
+        <div class="line-brief">
+          <p>請回到 LINE，輸入「已尋獲方向」。</p>
+          <p>回報完成後，將取得下一關任務信。</p>
+          <a href="https://lin.ee/o8PbMHy" target="_blank" rel="noopener">前往 LINE 回報</a>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.getElementById('sft-puzzle');
+      const questions = [
+        { number: '①', clue: '我是老城最有氣派的那道光，替市場留下繁華年代的身影。', answer: '紫' },
+        { number: '②', clue: '我是買賣興旺時最亮的那道光，像裝滿口袋的收成與祝福。', answer: '黃' },
+        { number: '③', clue: '我是每日新鮮送上攤位的那道光，祝人身體安好、生活長久。', answer: '綠' }
+      ];
+      let step = 0;
+      const intro = root.querySelector('#sft-intro');
+      const missionBrief = root.querySelector('#sft-mission-brief');
+      const game = root.querySelector('#sft-game');
+      const reveal = root.querySelector('#sft-reveal');
+      const nextStage = root.querySelector('#sft-next-stage');
+      const buildingInfo = root.querySelector('#sft-building-info');
+      const status = root.querySelector('#sft-status');
+      const clue = root.querySelector('#sft-clue');
+      const number = root.querySelector('#sft-number');
+      const clueText = root.querySelector('#sft-clue-text');
+      const answers = root.querySelector('#sft-answers');
+      const input = root.querySelector('#sft-input');
+      const feedback = root.querySelector('#sft-feedback');
+      const progressText = root.querySelector('#sft-progress-text');
+      const marks = [...root.querySelectorAll('.progress-line i')];
+
+      function render() {
+        const q = questions[step];
+        number.textContent = q.number;
+        clueText.textContent = q.clue;
+        progressText.textContent = `第 ${step + 1} 題，共 3 題`;
+        feedback.textContent = '';
+        marks.forEach((m, i) => m.classList.toggle('done', i < step));
+        input.value = '';
+        input.disabled = false;
+        answers.querySelector('button').disabled = false;
+        window.setTimeout(() => input.focus(), 80);
+        clue.style.animation = 'none';
+        requestAnimationFrame(() => { clue.style.animation = ''; });
+      }
+
+      root.querySelector('#sft-open-mission').addEventListener('click', () => {
+        intro.hidden = true;
+        missionBrief.classList.add('show');
+        status.textContent = '狀態：任務信讀取';
+        root.querySelector('#sft-start-puzzle').focus();
+      });
+
+      root.querySelector('#sft-start-puzzle').addEventListener('click', () => {
+        missionBrief.classList.remove('show');
+        game.hidden = false;
+        status.textContent = '狀態：辨認六道光芒';
+        render();
+      });
+
+      function check(choice) {
+        const q = questions[step];
+        const normalized = choice.trim().replace(/色$/, '');
+        const expected = q.answer.replace(/色$/, '');
+        if (!normalized) {
+          feedback.textContent = '請先在空格中填入一個顏色。';
+          input.focus();
+          return;
+        }
+        if (normalized !== expected) {
+          feedback.textContent = '線索尚未吻合，再觀察一次。';
+          input.select();
+          return;
+        }
+        feedback.textContent = `正確，${q.answer}的祝福已歸位。`;
+        marks[step].classList.add('done');
+        input.disabled = true;
+        answers.querySelector('button').disabled = true;
+        window.setTimeout(() => {
+          step += 1;
+          if (step < questions.length) render();
+          else {
+            game.hidden = true;
+            reveal.classList.add('show');
+            status.textContent = '狀態：檔案解封';
+            reveal.querySelector('h2').focus?.();
+          }
+        }, 650);
+      }
+
+      root.querySelector('#sft-next').addEventListener('click', () => {
+        reveal.classList.remove('show');
+        nextStage.classList.add('show');
+        status.textContent = '狀態：尋找目標地點';
+        root.querySelector('#sft-building-input').focus();
+      });
+
+      answers.addEventListener('submit', event => {
+        event.preventDefault();
+        check(input.value);
+      });
+
+      root.querySelector('#sft-building-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const buildingInput = root.querySelector('#sft-building-input');
+        const buildingFeedback = root.querySelector('#sft-building-feedback');
+        const answer = buildingInput.value.trim().replace(/\s+/g, '');
+        if (answer === '六角樓' || answer === '六角楼') {
+          status.textContent = '狀態：地點確認';
+          buildingFeedback.innerHTML = '答案正確！你已找到六角樓。<br>請先閱讀地點檔案，再回到 LINE 回報任務。<br><button class="read-more" id="sft-read-building" type="button">閱讀六角樓介紹</button>';
+          buildingInput.disabled = true;
+          event.currentTarget.querySelector('button').disabled = true;
+          root.querySelector('#sft-read-building').addEventListener('click', () => {
+            nextStage.classList.remove('show');
+            buildingInfo.classList.add('show');
+            status.textContent = '狀態：閱讀地點檔案';
+            buildingInfo.querySelector('h2').focus?.();
+          });
+        } else if (!answer) {
+          buildingFeedback.textContent = '請先寫下你找到的建築物名稱。';
+          buildingInput.focus();
+        } else {
+          buildingFeedback.textContent = '這個名字尚未吻合提示，再抬頭觀察一次。';
+          buildingInput.select();
+        }
+      });
+
+      const mosaic = root.querySelector('.mosaic');
+      for (let i = 0; i < 14; i += 1) mosaic.appendChild(document.createElement('span'));
+    })();
+  </script>
+</div>
+</body>
+</html>
