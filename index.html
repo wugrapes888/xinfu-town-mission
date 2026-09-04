@@ -715,6 +715,12 @@
       const progressText = root.querySelector('#sft-progress-text');
       const marks = [...root.querySelectorAll('.progress-line i')];
 
+      function scrollToTop() {
+        window.requestAnimationFrame(() => {
+          window.scrollTo({ top: 0, behavior: 'auto' });
+        });
+      }
+
       function render() {
         const q = questions[step];
         number.textContent = q.number;
@@ -734,6 +740,7 @@
         intro.hidden = true;
         missionBrief.classList.add('show');
         status.textContent = '狀態：任務信讀取';
+        scrollToTop();
         root.querySelector('#sft-start-puzzle').focus();
       });
 
@@ -741,6 +748,7 @@
         missionBrief.classList.remove('show');
         game.hidden = false;
         status.textContent = '狀態：辨認六道光芒';
+        scrollToTop();
         render();
       });
 
@@ -769,6 +777,7 @@
             game.hidden = true;
             reveal.classList.add('show');
             status.textContent = '狀態：檔案解封';
+            scrollToTop();
             reveal.querySelector('h2').focus?.();
           }
         }, 650);
@@ -778,6 +787,7 @@
         reveal.classList.remove('show');
         nextStage.classList.add('show');
         status.textContent = '狀態：尋找目標地點';
+        scrollToTop();
         root.querySelector('#sft-building-input').focus();
       });
 
@@ -800,6 +810,7 @@
             nextStage.classList.remove('show');
             buildingInfo.classList.add('show');
             status.textContent = '狀態：閱讀地點檔案';
+            scrollToTop();
             buildingInfo.querySelector('h2').focus?.();
           });
         } else if (!answer) {
