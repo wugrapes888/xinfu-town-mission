@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="新富町糖果街互動解謎">
+  <title>糖果街｜城市殘影調查檔案</title>
+</head>
+<body>
+<div id="sft-puzzle">
+  <style>
+    html { background: #211915; }
+    body {
+      margin: 0;
+      padding: 14px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(142, 86, 43, .28), transparent 52%),
+        linear-gradient(150deg, #3a2a20 0%, #211915 54%, #15100d 100%);
+    }
+    #sft-puzzle {
+      --ink: #21170f;
+      --paper-light: #fff0c6;
+      --rust: #8d3428;
+      --rust-dark: #61231d;
+      --olive: #47614d;
+      --line: rgba(70, 47, 25, .30);
+      --faded: #6c573c;
+      color: var(--ink);
+      font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    #sft-puzzle * { box-sizing: border-box; }
+    #sft-puzzle .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    #sft-puzzle .sheet {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 28px);
+      padding: 30px 22px 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.20), transparent 18%),
+        radial-gradient(ellipse at 18% 4%, rgba(255, 249, 221, .76), transparent 34%),
+        radial-gradient(ellipse at 82% 86%, rgba(112, 70, 34, .18), transparent 42%),
+        repeating-linear-gradient(28deg, transparent 0 58px, rgba(83, 59, 35, .055) 59px 60px, transparent 61px 124px),
+        repeating-linear-gradient(116deg, transparent 0 88px, rgba(70, 86, 78, .045) 89px 90px, transparent 91px 154px),
+        linear-gradient(155deg, #fff2cb 0%, #ead09a 54%, #cfa363 100%);
+      border: 1px solid rgba(216, 177, 111, .9);
+      border-radius: 6px;
+      box-shadow:
+        0 24px 58px rgba(12, 8, 5, .48),
+        inset 0 0 92px rgba(72, 39, 15, .20),
+        inset 0 0 0 1px rgba(255, 250, 226, .36);
+    }
+    #sft-puzzle .sheet::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .48;
+      background:
+        radial-gradient(circle at 16% 22%, rgba(80, 48, 23, .16) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 34%, rgba(80, 48, 23, .12) 0 1px, transparent 2px),
+        linear-gradient(102deg, transparent 0 24%, rgba(93, 70, 42, .13) 24.2%, transparent 24.7%),
+        linear-gradient(8deg, transparent 0 71%, rgba(93, 70, 42, .08) 71.1%, transparent 71.7%),
+        repeating-radial-gradient(ellipse at 68% 46%, transparent 0 30px, rgba(56, 74, 70, .060) 31px 32px, transparent 33px 58px);
+      background-size: auto, auto, auto, auto, 430px 330px;
+      mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 92%, transparent 100%);
+    }
+    #sft-puzzle .sheet::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      pointer-events: none;
+      border: 1px solid rgba(89, 57, 29, .30);
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 247, 218, .13),
+        inset 0 0 38px rgba(77, 45, 21, .13);
+      border-radius: 4px;
+    }
+    #sft-puzzle header, #sft-puzzle main { position: relative; z-index: 2; }
+    #sft-puzzle .map-mark {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      color: rgba(105, 75, 47, .16);
+      font-weight: 800;
+      line-height: 1;
+    }
+    #sft-puzzle .map-mark.one {
+      right: -18px;
+      bottom: 28px;
+      font-size: 150px;
+      transform: rotate(-8deg);
+    }
+    #sft-puzzle .map-mark.two {
+      left: 18px;
+      bottom: 22px;
+      font-size: 64px;
+      color: rgba(138, 55, 41, .13);
+      transform: rotate(6deg);
+    }
+    #sft-puzzle .stamp {
+      position: absolute;
+      right: 24px;
+      top: 22px;
+      width: 74px;
+      height: 74px;
+      border: 3px double rgba(141,52,40,.26);
+      border-radius: 50%;
+      transform: rotate(9deg);
+      color: rgba(141,52,40,.30);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-weight: 700;
+      z-index: 1;
+    }
+    #sft-puzzle .eyebrow {
+      color: var(--rust-dark);
+      letter-spacing: .06em;
+      font-weight: 800;
+      margin: 0 105px 8px 0;
+      font-size: 13px;
+    }
+    #sft-puzzle h1 {
+      font-size: 36px;
+      line-height: 1.2;
+      margin: 0;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+    #sft-puzzle .rule {
+      height: 1px;
+      background: var(--ink);
+      margin: 18px 0 7px;
+      position: relative;
+    }
+    #sft-puzzle .rule::after {
+      content: "◆";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--paper-light);
+      padding: 0 10px;
+      color: var(--rust);
+      font-size: 11px;
+    }
+    #sft-puzzle .meta {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      color: var(--faded);
+      font-size: 15px;
+      line-height: 1.5;
+      margin: 12px 0 30px;
+    }
+    #sft-puzzle .status {
+      color: var(--rust-dark);
+      font-weight: 800;
+    }
+    #sft-puzzle .intro-card,
+    #sft-puzzle .stage,
+    #sft-puzzle .reveal {
+      animation: sftReveal .45s ease-out;
+    }
+    #sft-puzzle .intro-card {
+      margin: 22px 0 30px;
+      padding: 22px 0 12px;
+      border-top: 2px solid rgba(33,23,15,.72);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+    }
+    #sft-puzzle .phase-strip {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 26px;
+      padding: 14px 16px;
+      background: rgba(255, 246, 218, .32);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .22);
+      border-bottom: 1px solid rgba(95, 66, 36, .22);
+      font-size: 20px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle .phase-strip span { display: block; }
+    #sft-puzzle .year {
+      margin: 0 0 18px;
+      color: var(--rust-dark);
+      font-size: 22px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    #sft-puzzle p,
+    #sft-puzzle .copy,
+    #sft-puzzle .letter {
+      font-size: 22px;
+      line-height: 1.78;
+      font-weight: 700;
+    }
+    #sft-puzzle .intro-card p {
+      margin: 0 0 18px;
+      font-size: 22px;
+      line-height: 1.72;
+      font-weight: 740;
+    }
+    #sft-puzzle .intro-card .quiet {
+      font-size: 22px;
+      font-weight: 650;
+    }
+    #sft-puzzle .copy,
+    #sft-puzzle .letter {
+      margin: 0 0 24px;
+      padding: 22px 0;
+      border-top: 1px solid rgba(70,47,25,.24);
+      border-bottom: 1px solid rgba(70,47,25,.24);
+    }
+    #sft-puzzle .copy p,
+    #sft-puzzle .letter p { margin: 0 0 18px; }
+    #sft-puzzle .copy p:last-child,
+    #sft-puzzle .letter p:last-child { margin-bottom: 0; }
+    #sft-puzzle button {
+      min-height: 56px;
+      border: 1px solid var(--rust-dark);
+      color: var(--ink);
+      background: rgba(255,246,218,.60);
+      font: 700 20px/1.2 inherit;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 rgba(95,38,30,.17);
+      transition: transform .14s ease, background .14s ease, color .14s ease;
+    }
+    #sft-puzzle button:hover { transform: translateY(-2px); background: rgba(255,248,225,.94); }
+    #sft-puzzle button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(95,38,30,.17); }
+    #sft-puzzle button:disabled {
+      cursor: not-allowed;
+      opacity: .52;
+      transform: none;
+    }
+    #sft-puzzle button:focus-visible,
+    #sft-puzzle input:focus-visible {
+      outline: 3px solid rgba(138,55,41,.52);
+      outline-offset: 3px;
+    }
+    #sft-puzzle .step-button {
+      width: 100%;
+      margin: 16px 0 0;
+      background: var(--rust-dark);
+      color: var(--paper-light);
+      border-color: var(--rust-dark);
+      box-shadow: 0 8px 18px rgba(72, 37, 24, .22), 3px 3px 0 rgba(32,24,18,.16);
+    }
+    #sft-puzzle .step-button:hover {
+      background: #7a3025;
+      color: #fff4d8;
+    }
+    #sft-puzzle .scroll-cue {
+      margin: 16px 0 0;
+      color: var(--faded);
+      text-align: center;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    #sft-puzzle .stage,
+    #sft-puzzle .reveal,
+    #sft-puzzle .history-page { display: none; }
+    #sft-puzzle .stage.show,
+    #sft-puzzle .reveal.show,
+    #sft-puzzle .history-page.show { display: block; }
+    #sft-puzzle .challenge-card {
+      margin: 6px 0 24px;
+      padding: 18px 16px 20px;
+      background:
+        linear-gradient(90deg, rgba(97,35,29,.10), transparent 46%),
+        rgba(255, 246, 218, .34);
+      border-left: 5px solid var(--rust-dark);
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+    }
+    #sft-puzzle .mission-kicker {
+      margin: 0 0 8px;
+      color: var(--rust-dark);
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+    #sft-puzzle .challenge-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.42;
+      font-weight: 850;
+    }
+    #sft-puzzle .challenge-note {
+      margin: 12px 0 0;
+      color: var(--faded);
+      font-size: 18px;
+      line-height: 1.65;
+      font-weight: 700;
+    }
+    #sft-puzzle .question {
+      margin: 18px 0 20px;
+      padding: 18px 16px;
+      background: rgba(255, 246, 218, .34);
+      border-left: 5px solid var(--olive);
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+      font-size: 21px;
+      line-height: 1.75;
+      font-weight: 800;
+    }
+    #sft-puzzle .question small {
+      display: block;
+      margin-top: 8px;
+      color: var(--faded);
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+    #sft-puzzle .answers {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    #sft-puzzle .answer-field {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--rust-dark);
+      background: rgba(255, 246, 218, .42);
+      padding: 0 16px;
+    }
+    #sft-puzzle .answer-field input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font: 700 22px/1.2 inherit;
+      text-align: center;
+    }
+    #sft-puzzle .answer-field input::placeholder { color: rgba(41,33,24,.42); }
+    #sft-puzzle .answer-field span:not(.sr-only) {
+      color: var(--rust-dark);
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    #sft-puzzle .feedback {
+      min-height: 28px;
+      margin: 15px 0 0;
+      color: var(--rust-dark);
+      font-weight: 700;
+      letter-spacing: .04em;
+      font-size: 20px;
+      line-height: 1.65;
+    }
+    #sft-puzzle .feedback.ok { color: var(--olive); }
+    #sft-puzzle .hint-stack {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 0;
+    }
+    #sft-puzzle .hint {
+      padding: 13px 14px;
+      background: rgba(255, 246, 218, .42);
+      border-left: 4px solid var(--rust);
+      border-top: 1px solid rgba(95, 66, 36, .20);
+      border-bottom: 1px solid rgba(95, 66, 36, .20);
+      color: var(--faded);
+      font-size: 18px;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+    #sft-puzzle .seal-complete {
+      width: 114px;
+      height: 114px;
+      margin: 4px auto 24px;
+      border: 4px double var(--rust);
+      border-radius: 50%;
+      color: var(--rust);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: .12em;
+      transform: rotate(-7deg);
+    }
+    #sft-puzzle .reveal h2 {
+      font-size: 28px;
+      text-align: center;
+      margin: 0 0 22px;
+    }
+    #sft-puzzle .history {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      font-size: 20px;
+      line-height: 1.85;
+    }
+    #sft-puzzle .history[hidden],
+    #sft-puzzle .line-brief[hidden],
+    #sft-puzzle .step-button[hidden] {
+      display: none;
+    }
+    #sft-puzzle .history p { margin: 0 0 13px; }
+    #sft-puzzle .history-photo {
+      margin: 18px 0 20px;
+      padding: 8px;
+      background: rgba(255, 246, 218, .42);
+      border: 1px solid rgba(95, 66, 36, .24);
+      box-shadow: 0 10px 24px rgba(72, 37, 24, .14);
+    }
+    #sft-puzzle .history-photo img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    #sft-puzzle .history-photo figcaption {
+      margin-top: 8px;
+      color: var(--faded);
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 700;
+      text-align: center;
+    }
+    #sft-puzzle .line-brief {
+      margin: 28px 0 0;
+      padding: 18px 16px;
+      background: rgba(255, 246, 218, .34);
+      border-left: 5px solid #06a846;
+      border-top: 1px solid rgba(95, 66, 36, .24);
+      border-bottom: 1px solid rgba(95, 66, 36, .24);
+      font-size: 20px;
+      line-height: 1.75;
+      font-weight: 800;
+    }
+    #sft-puzzle .line-brief a {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 16px;
+      background: #06c755;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(0,0,0,.16);
+      box-shadow: 3px 3px 0 rgba(32,24,18,.16);
+      font-size: 18px;
+    }
+    #sft-puzzle .line-brief .report-next {
+      margin-top: 10px;
+      color: var(--rust-dark);
+      font-size: 24px;
+      line-height: 1.55;
+      font-weight: 850;
+    }
+    @keyframes sftReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      #sft-puzzle .sheet {
+        min-height: calc(100vh - 20px);
+        padding: 28px 19px 32px;
+      }
+      #sft-puzzle .stamp {
+        right: 14px;
+        top: 16px;
+        width: 64px;
+        height: 64px;
+        font-size: 24px;
+      }
+      #sft-puzzle .map-mark.one {
+        right: -16px;
+        bottom: 26px;
+        font-size: 128px;
+        color: rgba(105, 75, 47, .11);
+      }
+      #sft-puzzle .map-mark.two {
+        left: 16px;
+        bottom: 22px;
+        color: rgba(141, 52, 40, .10);
+      }
+      #sft-puzzle .eyebrow { margin-right: 78px; }
+      #sft-puzzle .meta { flex-direction: column; gap: 4px; margin-bottom: 24px; }
+      #sft-puzzle .answers { grid-template-columns: 1fr; }
+      #sft-puzzle button { min-height: 60px; }
+      #sft-puzzle .phase-strip { margin-bottom: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #sft-puzzle *, #sft-puzzle *::before, #sft-puzzle *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+
+  <section class="sheet" aria-labelledby="sft-title">
+    <div class="stamp" aria-hidden="true">三關</div>
+    <div class="map-mark one" aria-hidden="true">糖</div>
+    <div class="map-mark two" aria-hidden="true">童</div>
+    <header>
+      <p class="eyebrow">城市殘影調查檔案 SFT-03</p>
+      <h1 id="sft-title">通往童年的路</h1>
+      <div class="rule"></div>
+      <div class="meta"><span class="status" id="sft-status">狀態：前言讀取</span></div>
+    </header>
+
+    <main>
+      <section class="intro-card" id="sft-intro">
+        <div class="phase-strip" aria-label="前言資料">
+          <span>第三關前言</span>
+          <span>任務代號：童年的路線</span>
+        </div>
+        <p class="year">第三關｜糖果街</p>
+        <p>你已經見過市場的心，也見過市場的信用。</p>
+        <p>但新富町不只有大人的買賣。</p>
+        <p>它也藏著小孩的眼睛。</p>
+        <p class="quiet">很久以前，第二市場附近有一條街，不是專賣夢，卻常常讓人一走進去，就想起小時候。</p>
+        <button class="step-button" id="sft-open-letter" type="button">讀取前言信</button>
+        <p class="scroll-cue">下一步：尋找童年的路</p>
+      </section>
+
+      <section class="stage" id="sft-letter">
+        <div class="phase-strip" aria-label="前言信">
+          <span>前言信</span>
+          <span>市場裡的小孩記憶</span>
+        </div>
+        <div class="copy">
+          <p>那裡的東西不是一顆一顆賣，而是一袋一袋、一桶一桶、一箱一箱地堆著。</p>
+          <p>糖果像彩色的石頭，餅乾像排好的寶藏，童玩掛在牆上，好像只要伸手一拿，就能把放學後的自己帶回來。</p>
+          <p>可惜，通往童年的路不會寫在地圖正中央。</p>
+        </div>
+        <button class="step-button" id="sft-start-route" type="button">開始尋找路線提示</button>
+        <p class="scroll-cue">下一步：第一個地標</p>
+      </section>
+
+      <section class="stage" id="sft-stage-1">
+        <div class="challenge-card">
+          <p class="mission-kicker">路線提示 ①</p>
+          <h2 class="challenge-title">市場裡的味道</h2>
+          <p class="challenge-note">答對後，下一段路線才會解鎖。</p>
+        </div>
+        <div class="letter">
+          <p>你要試著回答問題，找到前往童年的路。</p>
+          <p>你得先穿過市場裡的味道。</p>
+          <p>去找一面寫著許多滋味的牆。</p>
+          <p>若你在附近看見一點像魔法學校的影子，那表示你離出口不遠了。</p>
+        </div>
+        <p class="question">請問畫著魔法學校影子的建築物是什麼？<small>字數提示：兩個字</small></p>
+        <form class="answers" data-answer-form="0">
+          <label class="answer-field">
+            <span class="sr-only">請輸入第一題答案</span>
+            <input type="text" inputmode="text" autocomplete="off" placeholder="兩個字" aria-label="第一題答案">
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" data-feedback="0" aria-live="polite"></p>
+        <button class="step-button" type="button" data-hint-button="0">需要一點提示</button>
+        <div class="hint-stack" data-hints="0" aria-live="polite"></div>
+      </section>
+
+      <section class="stage" id="sft-stage-2">
+        <div class="challenge-card">
+          <p class="mission-kicker">路線提示 ②</p>
+          <h2 class="challenge-title">住在宮中的少年</h2>
+          <p class="challenge-note">請先離開市場，再觀察街上的水果行。</p>
+        </div>
+        <div class="letter">
+          <p>從那裡離開市場。</p>
+          <p>出去以後，不要急著找糖。</p>
+          <p>先看看街上的水果行。</p>
+          <p>新富町的甜，最早其實不是從糖開始的，而是從一箱一箱被運來的水果開始。</p>
+          <p>其中有一位名字很尊貴，像是住在宮中的少年。</p>
+        </div>
+        <p class="question">請問住在宮中的少年名字是什麼？<small>字數提示：兩個字</small></p>
+        <form class="answers" data-answer-form="1">
+          <label class="answer-field">
+            <span class="sr-only">請輸入第二題答案</span>
+            <input type="text" inputmode="text" autocomplete="off" placeholder="兩個字" aria-label="第二題答案">
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" data-feedback="1" aria-live="polite"></p>
+        <button class="step-button" type="button" data-hint-button="1">需要一點提示</button>
+        <div class="hint-stack" data-hints="1" aria-live="polite"></div>
+      </section>
+
+      <section class="stage" id="sft-stage-3">
+        <div class="challenge-card">
+          <p class="mission-kicker">路線提示 ③</p>
+          <h2 class="challenge-title">小時候的抽屜</h2>
+          <p class="challenge-note">這是通往童年記憶的最後一段路。</p>
+        </div>
+        <div class="letter">
+          <p>但別被這個名字騙了。</p>
+          <p>若你以為他只吃清淡素食，就走錯故事了。</p>
+          <p>在那間素食麵店旁轉進去。</p>
+          <p>轉過去以後，街道會忽然變得像小時候的抽屜：</p>
+          <p>什麼都有，什麼都亮，什麼都想買。</p>
+          <p>第三段記憶不在大人的帳本裡，而在孩子捨不得鬆開的手心裡。</p>
+        </div>
+        <p class="question">這條街叫做什麼街？<small>字數提示：兩個字</small></p>
+        <form class="answers" data-answer-form="2">
+          <label class="answer-field">
+            <span class="sr-only">請輸入第三題答案</span>
+            <input type="text" inputmode="text" autocomplete="off" placeholder="兩個字" aria-label="第三題答案">
+            <span aria-hidden="true">街</span>
+          </label>
+          <button type="submit">確認答案</button>
+        </form>
+        <p class="feedback" data-feedback="2" aria-live="polite"></p>
+        <button class="step-button" type="button" data-hint-button="2">需要一點提示</button>
+        <div class="hint-stack" data-hints="2" aria-live="polite"></div>
+      </section>
+
+      <section class="reveal" id="sft-reveal" aria-live="polite">
+        <div class="seal-complete">檔案<br>解封</div>
+        <h2>第三關 糖果街</h2>
+        <div class="history">
+          <p>你找到了那條街。</p>
+          <p>新富町的甜，不只在水果箱裡，也藏在孩子走進街口時亮起來的眼睛裡。</p>
+          <p>大人的市場記得帳本、秤錘和信用；孩子的市場記得糖果袋、餅乾桶、童玩牆，還有握在手裡捨不得放開的小東西。</p>
+          <p>第三段記憶，已經回到你手上。</p>
+        </div>
+        <button class="step-button" id="sft-read-history" type="button">閱讀興中街介紹</button>
+      </section>
+
+      <section class="history-page" id="sft-history-page" aria-live="polite">
+        <div class="history" id="sft-street-history" hidden>
+          <p><strong>興中街糖果街的由來</strong></p>
+          <p>興中街會成為糖果、餅乾與童玩批發街，和它緊鄰第二市場有關。早年的第二市場是臺中重要的果菜與雜貨集散地，貨物流動頻繁，許多糖果、餅乾與雜貨批發店便聚集到市場旁，慢慢形成「糖果街」。</p>
+          <figure class="history-photo">
+            <img src="https://drive.google.com/thumbnail?id=1-I0e-MKPR0Q4t_G70Vk29IcgXdekBgoA&amp;sz=w1000" alt="興中街糖果街相關照片" loading="lazy">
+            <figcaption>興中街糖果街</figcaption>
+          </figure>
+          <p>1950 年代前後，興中街最為熱鬧。當時各地雜貨店會來這裡批貨，孩子也把這裡記成一條放大的零食抽屜：糖果一袋袋、餅乾一桶桶、童玩一串串，走進去就像走進童年的寶藏庫。</p>
+          <p>後來量販店與便利商店興起，傳統批發生意逐漸沒落，但興中街仍留下幾間老店，延續大包裝糖果、餅乾、童玩與節慶採買的特色。這條街的甜味，也就成了第二市場旁最有童年感的記憶。</p>
+        </div>
+        <div class="line-brief" id="sft-line-brief" hidden>
+          <p><strong>請回到 LINE，輸入「取得獵物」。</strong></p>
+          <p class="report-next"><strong>回報完成後，將取得下一關任務信。</strong></p>
+          <a href="https://lin.ee/o8PbMHy" target="_blank" rel="noopener">前往 LINE 回報</a>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.getElementById('sft-puzzle');
+      const intro = root.querySelector('#sft-intro');
+      const letter = root.querySelector('#sft-letter');
+      const stages = [
+        root.querySelector('#sft-stage-1'),
+        root.querySelector('#sft-stage-2'),
+        root.querySelector('#sft-stage-3')
+      ];
+      const reveal = root.querySelector('#sft-reveal');
+      const historyPage = root.querySelector('#sft-history-page');
+      const status = root.querySelector('#sft-status');
+      const readHistoryButton = root.querySelector('#sft-read-history');
+      const streetHistory = root.querySelector('#sft-street-history');
+      const lineBrief = root.querySelector('#sft-line-brief');
+      const puzzles = [
+        {
+          label: '第一個地標確認',
+          accepted: ['公廁', '公共廁所', '廁所'],
+          near: ['哈利波特', '魔法學校', '彩繪牆', '牆面彩繪'],
+          success: '正確。你找到了出口附近的地標，下一段路線已解鎖。',
+          empty: '請先輸入畫著魔法學校影子的建築物。',
+          wrong: '還沒有吻合。請找的是建築物或公共設施，不是彩繪主題。',
+          hints: [
+            '提示一：魔法學校的影子在牆面彩繪上。',
+            '提示二：它不是店家，也不是攤位。',
+            '提示三：請找公共設施。',
+            '提示四：這個地方通常會標示男、女或無障礙符號。'
+          ]
+        },
+        {
+          label: '第二個地標確認',
+          accepted: ['太子', '太子水果', '太子水果行'],
+          near: ['水果', '水果攤', '水果行', '少年'],
+          success: '正確。別被名字騙了，下一個轉角已經出現。',
+          empty: '請先輸入住在宮中的少年名字。',
+          wrong: '還沒有吻合。請看水果攤的名字，不是水果種類。',
+          hints: [
+            '提示一：答案在水果攤的名字裡。',
+            '提示二：這個名字聽起來像身分，不像水果。',
+            '提示三：住在宮中的少年，常被稱作什麼？',
+            '提示四：答案是兩個字。'
+          ]
+        },
+        {
+          label: '街名確認',
+          accepted: ['興中', '興中街'],
+          near: ['糖果', '糖果街', '街', '童年'],
+          success: '正確。第三段記憶已解封。',
+          empty: '請先輸入你看到的街名。',
+          wrong: '還沒有吻合。請確認轉進去後看到的街名標示。',
+          hints: [
+            '提示一：答案在街名標示上。',
+            '提示二：不是店名，也不是商品種類。',
+            '提示三：請輸入「街」前面的兩個字。',
+            '提示四：第一個字有興盛的意思；第二個字在中間。'
+          ]
+        }
+      ];
+      const hintSteps = [0, 0, 0];
+
+      function show(target, label, focusTarget) {
+        [intro, letter, ...stages, reveal, historyPage].forEach(section => {
+          section.classList.toggle('show', section === target);
+          if (section === intro) section.hidden = target !== intro;
+          else section.hidden = false;
+        });
+        status.textContent = `狀態：${label}`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.setTimeout(() => focusTarget?.focus(), 80);
+      }
+
+      function normalize(value) {
+        return value
+          .trim()
+          .replace(/[「」『』"'，。！？、\s]/g, '')
+          .replace(/厕/g, '廁')
+          .replace(/厕所/g, '廁所');
+      }
+
+      function bindPuzzle(index) {
+        const form = root.querySelector(`[data-answer-form="${index}"]`);
+        const input = form.querySelector('input');
+        const button = form.querySelector('button');
+        const feedback = root.querySelector(`[data-feedback="${index}"]`);
+        const hintButton = root.querySelector(`[data-hint-button="${index}"]`);
+        const hintBox = root.querySelector(`[data-hints="${index}"]`);
+        const puzzle = puzzles[index];
+
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          const answer = normalize(input.value);
+          feedback.classList.remove('ok');
+
+          if (!answer) {
+            feedback.textContent = puzzle.empty;
+            input.focus();
+            return;
+          }
+
+          if (puzzle.accepted.includes(answer)) {
+            feedback.textContent = puzzle.success;
+            feedback.classList.add('ok');
+            input.disabled = true;
+            button.disabled = true;
+            hintButton.disabled = true;
+            window.setTimeout(() => {
+              if (index < stages.length - 1) {
+                const nextInput = stages[index + 1].querySelector('input');
+                show(stages[index + 1], puzzles[index + 1].label, nextInput);
+              } else {
+                show(reveal, '檔案解封', null);
+              }
+            }, 700);
+            return;
+          }
+
+          if (puzzle.near.includes(answer)) {
+            feedback.textContent = '你找到相關線索了，但這題要填的是現場標示上的答案。';
+            input.select();
+            return;
+          }
+
+          feedback.textContent = puzzle.wrong;
+          input.select();
+        });
+
+        hintButton.addEventListener('click', () => {
+          const step = hintSteps[index];
+          if (step >= puzzle.hints.length) return;
+          const hint = document.createElement('div');
+          hint.className = 'hint';
+          hint.textContent = puzzle.hints[step];
+          hintBox.appendChild(hint);
+          hintSteps[index] += 1;
+          hintButton.textContent = hintSteps[index] >= puzzle.hints.length ? '提示已全部開啟' : '再給我一點提示';
+          hintButton.disabled = hintSteps[index] >= puzzle.hints.length;
+        });
+      }
+
+      root.querySelector('#sft-open-letter').addEventListener('click', () => {
+        show(letter, '前言信讀取', root.querySelector('#sft-start-route'));
+      });
+
+      root.querySelector('#sft-start-route').addEventListener('click', () => {
+        show(stages[0], puzzles[0].label, stages[0].querySelector('input'));
+      });
+
+      readHistoryButton.addEventListener('click', () => {
+        streetHistory.hidden = false;
+        lineBrief.hidden = false;
+        status.textContent = '狀態：閱讀街區檔案';
+        show(historyPage, '閱讀街區檔案', null);
+      });
+
+      puzzles.forEach((_, index) => bindPuzzle(index));
+    })();
+  </script>
+</div>
+</body>
+</html>
