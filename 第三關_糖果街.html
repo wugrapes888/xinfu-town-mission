@@ -807,6 +807,17 @@
         const hintButton = root.querySelector(`[data-hint-button="${index}"]`);
         const hintBox = root.querySelector(`[data-hints="${index}"]`);
         const puzzle = puzzles[index];
+        const numerals = ['一', '二', '三', '四'];
+
+        function nextHintButtonText(nextStep) {
+          if (nextStep >= puzzle.hints.length) return '提示已全部開啟';
+          if (nextStep > 0) {
+            return `看完提示${numerals[nextStep - 1]}還是不懂，請按提示${numerals[nextStep]}`;
+          }
+          return `開啟提示${numerals[nextStep]}`;
+        }
+
+        hintButton.textContent = nextHintButtonText(0);
 
         form.addEventListener('submit', event => {
           event.preventDefault();
@@ -853,8 +864,9 @@
           hint.className = 'hint';
           hint.textContent = puzzle.hints[step];
           hintBox.appendChild(hint);
+          hintBox.after(hintButton);
           hintSteps[index] += 1;
-          hintButton.textContent = hintSteps[index] >= puzzle.hints.length ? '提示已全部開啟' : '再給我一點提示';
+          hintButton.textContent = nextHintButtonText(hintSteps[index]);
           hintButton.disabled = hintSteps[index] >= puzzle.hints.length;
         });
       }
