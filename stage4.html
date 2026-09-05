@@ -264,6 +264,23 @@
       background: #7a3025;
       color: #fff4d8;
     }
+    #sft-puzzle .page-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 26px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    #sft-puzzle .page-nav button {
+      min-height: 50px;
+      font-size: 17px;
+      background: rgba(255,246,218,.60);
+      color: var(--ink);
+    }
+    #sft-puzzle .page-nav button:disabled {
+      opacity: .45;
+    }
     #sft-puzzle .scroll-cue {
       margin: 16px 0 0;
       color: var(--faded);
@@ -725,6 +742,51 @@
         }
       ];
       const hintSteps = [0, 0, 0];
+      let currentPage = 0;
+      let maxUnlockedPage = 0;
+      const pages = [
+        { section: intro, label: '前言讀取', focus: root.querySelector('#sft-open-letter'), nextAction: () => root.querySelector('#sft-open-letter').click() },
+        { section: letter, label: '前言信讀取', focus: root.querySelector('#sft-start-route'), nextAction: () => root.querySelector('#sft-start-route').click() },
+        { section: stages[0], label: puzzles[0].label, focus: stages[0].querySelector('input') },
+        { section: stages[1], label: puzzles[1].label, focus: stages[1].querySelector('input') },
+        { section: arrival, label: '最後任務入口', focus: root.querySelector('#sft-open-final'), nextAction: () => root.querySelector('#sft-open-final').click() },
+        { section: stages[2], label: puzzles[2].label, focus: stages[2].querySelector('input') },
+        { section: reveal, label: '檔案解封', focus: readHistoryButton, nextAction: () => readHistoryButton.click() },
+        { section: historyPage, label: '閱讀街區檔案' }
+      ];
+
+      function updatePageNav() {
+        pages.forEach((page, index) => {
+          const nav = page.section.querySelector('.page-nav');
+          if (!nav) return;
+          const previous = nav.querySelector('[data-page-prev]');
+          const next = nav.querySelector('[data-page-next]');
+          previous.disabled = index === 0;
+          const canUseAction = index === currentPage && typeof page.nextAction === 'function';
+          next.disabled = !(index < maxUnlockedPage || canUseAction) || index === pages.length - 1;
+        });
+      }
+
+      function goToPage(index) {
+        const page = pages[index];
+        if (!page) return;
+        show(page.section, page.label, page.focus);
+      }
+
+      function installPageNav() {
+        pages.forEach((page, index) => {
+          const nav = document.createElement('div');
+          nav.className = 'page-nav';
+          nav.innerHTML = '<button type="button" data-page-prev>上一頁</button><button type="button" data-page-next>下一頁</button>';
+          page.section.appendChild(nav);
+          nav.querySelector('[data-page-prev]').addEventListener('click', () => goToPage(index - 1));
+          nav.querySelector('[data-page-next]').addEventListener('click', () => {
+            if (index < maxUnlockedPage) goToPage(index + 1);
+            else page.nextAction?.();
+          });
+        });
+        updatePageNav();
+      }
 
       function show(target, label, focusTarget) {
         [intro, letter, ...stages, arrival, reveal, historyPage].forEach(section => {
@@ -732,8 +794,14 @@
           if (section === intro) section.hidden = target !== intro;
           else section.hidden = false;
         });
+        const pageIndex = pages.findIndex(page => page.section === target);
+        if (pageIndex >= 0) {
+          currentPage = pageIndex;
+          maxUnlockedPage = Math.max(maxUnlockedPage, pageIndex);
+        }
         status.textContent = `狀態：${label}`;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        updatePageNav();
         window.setTimeout(() => focusTarget?.focus(), 80);
       }
 
@@ -852,6 +920,7 @@
         show(historyPage, '閱讀街區檔案', null);
       });
 
+      installPageNav();
       puzzles.forEach((_, index) => bindPuzzle(index));
     })();
   </script>

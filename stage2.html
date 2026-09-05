@@ -275,6 +275,23 @@
       background: #7a3025;
       color: #fff4d8;
     }
+    #sft-puzzle .page-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 26px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    #sft-puzzle .page-nav button {
+      min-height: 50px;
+      font-size: 17px;
+      background: rgba(255,246,218,.60);
+      color: var(--ink);
+    }
+    #sft-puzzle .page-nav button:disabled {
+      opacity: .45;
+    }
     #sft-puzzle .scroll-cue {
       margin: 16px 0 0;
       color: var(--faded);
@@ -708,6 +725,48 @@
         '提示四：這座廟和武聖關公、忠義與守信有關。'
       ];
       let hintStep = 0;
+      let currentPage = 0;
+      let maxUnlockedPage = 0;
+      const pages = [
+        { section: intro, label: '前言讀取', focus: root.querySelector('#sft-open-mission'), nextAction: () => root.querySelector('#sft-open-mission').click() },
+        { section: missionBrief, label: '任務信讀取', focus: root.querySelector('#sft-start-route'), nextAction: () => root.querySelector('#sft-start-route').click() },
+        { section: routeStage, label: '市場訊號確認', focus: arriveButton, canUseNextAction: () => !arriveButton.disabled, nextAction: () => arriveButton.click() },
+        { section: answerStage, label: '確認廟名', focus: answerInput },
+        { section: reveal, label: '檔案解封' }
+      ];
+
+      function updatePageNav() {
+        pages.forEach((page, index) => {
+          const nav = page.section.querySelector('.page-nav');
+          if (!nav) return;
+          const previous = nav.querySelector('[data-page-prev]');
+          const next = nav.querySelector('[data-page-next]');
+          previous.disabled = index === 0;
+          const canUseAction = index === currentPage && typeof page.nextAction === 'function' && (page.canUseNextAction?.() ?? true);
+          next.disabled = !(index < maxUnlockedPage || canUseAction) || index === pages.length - 1;
+        });
+      }
+
+      function goToPage(index) {
+        const page = pages[index];
+        if (!page) return;
+        show(page.section, page.label, page.focus);
+      }
+
+      function installPageNav() {
+        pages.forEach((page, index) => {
+          const nav = document.createElement('div');
+          nav.className = 'page-nav';
+          nav.innerHTML = '<button type="button" data-page-prev>上一頁</button><button type="button" data-page-next>下一頁</button>';
+          page.section.appendChild(nav);
+          nav.querySelector('[data-page-prev]').addEventListener('click', () => goToPage(index - 1));
+          nav.querySelector('[data-page-next]').addEventListener('click', () => {
+            if (index < maxUnlockedPage) goToPage(index + 1);
+            else page.nextAction?.();
+          });
+        });
+        updatePageNav();
+      }
 
       function show(target, label, focusTarget) {
         [intro, missionBrief, routeStage, answerStage, reveal].forEach(section => {
@@ -715,8 +774,14 @@
           if (section === intro) section.hidden = target !== intro;
           else section.hidden = false;
         });
+        const pageIndex = pages.findIndex(page => page.section === target);
+        if (pageIndex >= 0) {
+          currentPage = pageIndex;
+          maxUnlockedPage = Math.max(maxUnlockedPage, pageIndex);
+        }
         status.textContent = `狀態：${label}`;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        updatePageNav();
         window.setTimeout(() => focusTarget?.focus(), 80);
       }
 
@@ -742,6 +807,7 @@
           routeNotice.textContent = complete
             ? '三個市場訊號都出現了。現在請尋找附近供人參拜的小廟。'
             : '目前尚未完成三個訊號確認。';
+          updatePageNav();
         });
       });
 
@@ -784,6 +850,8 @@
         hintButton.textContent = hintStep >= hintTexts.length ? '提示已全部開啟' : '再給我一點提示';
         hintButton.disabled = hintStep >= hintTexts.length;
       });
+
+      installPageNav();
     })();
   </script>
 </div>
